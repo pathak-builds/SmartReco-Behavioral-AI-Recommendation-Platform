@@ -16,6 +16,7 @@ from fastapi.templating import Jinja2Templates
 from app.config import settings
 from app.utils.logging_config import setup_logging
 
+from app.api.auth import router as auth_router
 
 # ---------------------------------------------------------
 # Configure Logging
@@ -63,7 +64,11 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+# ---------------------------------------------------------
+# API Routers
+# ---------------------------------------------------------
 
+app.include_router(auth_router)
 # ---------------------------------------------------------
 # Static Files
 # ---------------------------------------------------------
@@ -146,13 +151,7 @@ async def health_check():
         "environment": "development" if settings.DEBUG else "production",
     }
 
-
-# ---------------------------------------------------------
-# API Routers
-# (Added in later phases)
-# ---------------------------------------------------------
-
-# app.include_router(auth_router)
+# Future routers
 # app.include_router(user_router)
 # app.include_router(product_router)
 # app.include_router(recommendation_router)
