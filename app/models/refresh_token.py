@@ -1,28 +1,28 @@
 """
-User model for SmartReco.
+Refresh Token model for SmartReco.
+
+Stores hashed refresh tokens for secure JWT authentication.
 """
+
+from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
-from enum import Enum
+from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum as SQLEnum, String
+from sqlalchemy import Boolean, DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
-
-class UserRole(str, Enum):
-    """Supported application roles."""
-
-    USER = "user"
-    ADMIN = "admin"
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
-class User(Base):
-    """Application user."""
+class RefreshToken(Base):
+    """Refresh token stored in the database."""
 
-    __tablename__ = "users"
+    __tablename__ = "refresh_tokens"
 
     # ==========================================================
     # Primary Key
@@ -34,39 +34,31 @@ class User(Base):
     )
 
     # ==========================================================
-    # User Information
+    # Foreign Key
     # ==========================================================
-    username: Mapped[str] = mapped_column(
-        String(50),
-        unique=True,
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
         index=True,
-        nullable=False,
     )
 
-    email: Mapped[str] = mapped_column(
-        String(255),
+    # ==========================================================
+    # Token Information
+    # ==========================================================
+    token_hash: Mapped[str] = mapped_column(
+        String(128),
         unique=True,
-        index=True,
         nullable=False,
     )
 
-    hashed_password: Mapped[str] = mapped_column(
-        String(255),
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
         nullable=False,
     )
 
-    role: Mapped[UserRole] = mapped_column(
-        SQLEnum(
-            UserRole,
-            native_enum=False,
-            validate_strings=True,
-        ),
-        default=UserRole.USER,
-        nullable=False,
-    )
-
-    is_active: Mapped[bool] = mapped_column(
-        default=True,
+    revoked: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
         nullable=False,
     )
 
@@ -89,33 +81,19 @@ class User(Base):
     # ==========================================================
     # Relationships
     # ==========================================================
-    behavior_events = relationship(
-        "BehaviorEvent",
-        back_populates="user",
-        cascade="all, delete-orphan",
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="refresh_tokens",
     )
-
-    recommendations = relationship(
-        "Recommendation",
-        back_populates="user",
-        cascade="all, delete-orphan",
-    )
-    
-    refresh_tokens = relationship(
-        "RefreshToken",
-        back_populates="user",
-        cascade="all, delete-orphan",
-)
 
     # ==========================================================
     # Representation
     # ==========================================================
     def __repr__(self) -> str:
         return (
-            f"User("
+            f"RefreshToken("
             f"id='{self.id}', "
-            f"username='{self.username}', "
-            f"email='{self.email}', "
-            f"role='{self.role.value}'"
+            f"user_id='{self.user_id}', "
+            f"revoked={self.revoked}"
             f")"
         )
