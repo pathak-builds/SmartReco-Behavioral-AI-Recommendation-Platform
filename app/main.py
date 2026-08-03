@@ -17,6 +17,8 @@ from app.config import settings
 from app.utils.logging_config import setup_logging
 
 from app.api.auth import router as auth_router
+from app.api.products import router as products_router
+from app.api.admin import router as admin_router
 
 # ---------------------------------------------------------
 # Configure Logging
@@ -69,6 +71,8 @@ app = FastAPI(
 # ---------------------------------------------------------
 
 app.include_router(auth_router)
+app.include_router(products_router)
+app.include_router(admin_router)
 # ---------------------------------------------------------
 # Static Files
 # ---------------------------------------------------------

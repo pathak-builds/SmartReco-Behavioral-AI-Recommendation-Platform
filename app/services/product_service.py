@@ -10,7 +10,9 @@ Contains all business logic for:
 """
 
 from __future__ import annotations
+import logging
 
+from app.services.embedding_service import EmbeddingService
 import uuid
 
 from sqlalchemy.orm import Session, joinedload
@@ -19,12 +21,13 @@ from app.models.category import Category
 from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductUpdate
 
-
+logger = logging.getLogger(__name__)
 class ProductService:
     """Business logic for product management."""
 
     def __init__(self, db: Session):
         self.db = db
+        self.embedding_service = EmbeddingService()
 
     # ==========================================================
     # Create Product
@@ -60,6 +63,40 @@ class ProductService:
         self.db.add(product)
         self.db.commit()
         self.db.refresh(product)
+        
+        # --------------------------------------------------
+        # Sync product to ChromaDB
+        # --------------------------------------------------
+
+        try:
+
+            self.embedding_service.collection.upsert(
+                ids=[product.id],
+                documents=[
+                    self.embedding_service.build_document(product)
+                ],
+                embeddings=[
+                    self.embedding_service.embed_text(
+                        self.embedding_service.build_document(product)
+                    )
+                ],
+                metadatas=[
+                    self.embedding_service.build_metadata(product)
+                ],
+            )
+
+            logger.info(
+                "Product %s synced to ChromaDB.",
+                product.id,
+            )
+
+        except Exception as exc:
+
+            logger.exception(
+                "Failed to sync product %s: %s",
+                product.id,
+                exc,
+            )
 
         return product
 
@@ -144,6 +181,35 @@ class ProductService:
 
         self.db.commit()
         self.db.refresh(product)
+        
+        try:
+
+            self.embedding_service.collection.upsert(
+                ids=[product.id],
+                documents=[
+                    self.embedding_service.build_document(product)
+                ],
+                embeddings=[
+                    self.embedding_service.embed_text(
+                        self.embedding_service.build_document(product)
+                    )
+                ],
+                metadatas=[
+                    self.embedding_service.build_metadata(product)
+                ],
+            )
+
+            logger.info(
+                "Updated embedding for product %s",
+                product.id,
+            )
+
+        except Exception as exc:
+
+            logger.exception(
+                "Embedding update failed: %s",
+                exc,
+            )
 
         return product
 
@@ -167,6 +233,25 @@ class ProductService:
         product.is_active = False
 
         self.db.commit()
+        
+        
+        try:
+
+            self.embedding_service.collection.delete(
+                ids=[product.id],
+            )
+
+            logger.info(
+                "Deleted embedding for %s",
+                product.id,
+            )
+
+        except Exception as exc:
+
+            logger.exception(
+                "Embedding deletion failed: %s",
+                exc,
+            )
 
         return True
 
