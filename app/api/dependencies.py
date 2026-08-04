@@ -9,9 +9,12 @@ Provides reusable FastAPI dependencies for:
 """
 
 from __future__ import annotations
-
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import (
+    OAuth2PasswordBearer,
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+)
 from jose import JWTError
 from sqlalchemy.orm import Session
 
@@ -29,7 +32,13 @@ oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/auth/login",
 )
 
+# ==========================================================
+# Optional Bearer Authentication
+# ==========================================================
 
+optional_bearer = HTTPBearer(
+    auto_error=False,
+)
 # ==========================================================
 # Authentication Exception
 # ==========================================================
@@ -78,7 +87,55 @@ def get_current_user(
         )
 
     return user
+# ==========================================================
+# Optional Current User
+# ==========================================================
 
+def get_optional_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(
+        optional_bearer
+    ),
+    db: Session = Depends(get_db),
+) -> User | None:
+    """
+    Return the authenticated user if a valid
+    Bearer token is supplied.
+
+    Otherwise return None.
+
+    This allows anonymous visitors to use
+    public pages while still recording
+    behavioral events.
+    """
+
+    if credentials is None:
+        return None
+
+    token = credentials.credentials
+
+    try:
+
+        payload = validate_access_token(token)
+
+        user_id = payload.get("sub")
+
+        if user_id is None:
+            return None
+
+    except JWTError:
+        return None
+
+    auth_service = AuthService(db)
+
+    user = auth_service.get_user_by_id(user_id)
+
+    if user is None:
+        return None
+
+    if not user.is_active:
+        return None
+
+    return user
 
 # ==========================================================
 # Current Active Admin

@@ -30,6 +30,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.product import ProductResponse
 from app.services.product_service import ProductService
+from app.services.category_service import CategoryService
 
 router = APIRouter(
     prefix="/products",
@@ -105,8 +106,9 @@ def browse_products(
     page: int = 1,
     query: str | None = None,
     category_id: int | None = None,
+    difficulty: str | None = None,
     min_price: float | None = None,
-    max_price: float | None = None,
+    max_price: float |None = None,
     sort_by: str = "name",
     db: Session = Depends(get_db),
 ):
@@ -120,6 +122,7 @@ def browse_products(
         service.search_products(
             query=query,
             category_id=category_id,
+            difficulty=difficulty,
             min_price=min_price,
             max_price=max_price,
             sort_by=sort_by,
@@ -127,15 +130,25 @@ def browse_products(
         )
     )
 
+    categories = (
+        CategoryService(db)
+        .list_categories()
+    )
+
     return templates.TemplateResponse(
         "products/list.html",
         {
             "request": request,
             "products": products,
+            "categories": categories,
+            "difficulty": difficulty,
             "total": total,
             "page": page,
             "pages": total_pages,
             "query": query,
+            "category_id": category_id,
+            "min_price": min_price,
+            "max_price": max_price,
             "sort_by": sort_by,
         },
     )

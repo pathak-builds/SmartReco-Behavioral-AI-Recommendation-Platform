@@ -22,26 +22,147 @@ Products
 
         </div>
 
-        <div class="col-md-4">
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="card mb-4 shadow-sm">
+
+        <div class="card-body">
 
             <form method="get">
 
-                <div class="input-group">
+                <div class="row g-3 align-items-end">
 
-                    <input
-                        type="text"
-                        class="form-control"
-                        name="query"
-                        placeholder="Search products..."
-                        value="{{ query or '' }}"
-                    >
+                    <!-- Search -->
+                    <div class="col-md-4">
 
-                    <button
-                        class="btn btn-primary"
-                        type="submit"
-                    >
-                        Search
-                    </button>
+                        <label class="form-label">
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="query"
+                            placeholder="Search products..."
+                            value="{{ query or '' }}"
+                        >
+
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Category
+                        </label>
+
+                        <select
+                            class="form-select"
+                            name="category_id"
+                        >
+
+                            <option value="">
+                                All Categories
+                            </option>
+
+                            {% for category in categories %}
+
+                            <option
+                                value="{{ category.id }}"
+                                {% if category_id and category.id == category_id %}selected{% endif %}
+                            >
+                                {{ category.name }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <!-- Difficulty -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Difficulty
+                        </label>
+
+                        <select
+                            class="form-select"
+                            name="difficulty"
+                        >
+
+                            <option value="">
+                                All Levels
+                            </option>
+
+                            <option value="Beginner"
+                                {% if difficulty == "Beginner" %}selected{% endif %}>
+                                Beginner
+                            </option>
+
+                            <option value="Intermediate"
+                                {% if difficulty == "Intermediate" %}selected{% endif %}>
+                                Intermediate
+                            </option>
+
+                            <option value="Advanced"
+                                {% if difficulty == "Advanced" %}selected{% endif %}>
+                                Advanced
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Sort By
+                        </label>
+
+                        <select
+                            class="form-select"
+                            name="sort_by"
+                        >
+
+                            <option value="name"
+                                {% if sort_by == "name" %}selected{% endif %}>
+                                Name
+                            </option>
+
+                            <option value="price_low"
+                                {% if sort_by == "price_low" %}selected{% endif %}>
+                                Price: Low → High
+                            </option>
+
+                            <option value="price_high"
+                                {% if sort_by == "price_high" %}selected{% endif %}>
+                                Price: High → Low
+                            </option>
+
+                            <option value="rating"
+                                {% if sort_by == "rating" %}selected{% endif %}>
+                                Rating
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Search Button -->
+                    <div class="col-md-2 d-grid">
+
+                        <button
+                            class="btn btn-primary"
+                            type="submit"
+                        >
+                            Search
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -51,6 +172,7 @@ Products
 
     </div>
 
+    <!-- Products -->
     <div class="row">
 
         {% for product in products %}
@@ -129,10 +251,23 @@ Products
 
         </div>
 
+        {% else %}
+
+        <div class="col-12">
+
+            <div class="alert alert-info">
+
+                No products found.
+
+            </div>
+
+        </div>
+
         {% endfor %}
 
     </div>
 
+    <!-- Pagination -->
     {% if pages > 1 %}
 
     <nav>
@@ -145,7 +280,7 @@ Products
 
                 <a
                     class="page-link"
-                    href="?page={{ p }}"
+                    href="?page={{ p }}&query={{ query or '' }}&category_id={{ category_id or '' }}&difficulty={{ difficulty or '' }}&sort_by={{ sort_by }}"
                 >
                     {{ p }}
                 </a>

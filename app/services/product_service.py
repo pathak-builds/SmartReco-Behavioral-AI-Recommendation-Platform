@@ -283,6 +283,7 @@ class ProductService:
         self,
         query: Optional[str] = None,
         category_id: Optional[int] = None,
+        difficulty: Optional[str] = None,
         min_price: Optional[float] = None,
         max_price: Optional[float] = None,
         sort_by: str = "name",
@@ -291,6 +292,7 @@ class ProductService:
     ) -> tuple[list[Product], int, int]:
         """
         Search, filter, sort and paginate products.
+
         Returns:
             (
                 products,
@@ -330,6 +332,16 @@ class ProductService:
                 Product.category_id == category_id
             )
 
+
+        # -------------------------------
+        # Difficulty Filter
+        # -------------------------------
+
+        if difficulty:
+
+            q = q.filter(
+                Product.difficulty == difficulty
+    )
         # -------------------------------
         # Price Filters
         # -------------------------------

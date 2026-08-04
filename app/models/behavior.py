@@ -32,13 +32,22 @@ if TYPE_CHECKING:
 class EventType(str, Enum):
     """Supported user behavior events."""
 
+    PAGE_VIEW = "page_view"
+
     PRODUCT_VIEW = "product_view"
+
     SEARCH = "search"
+
     CLICK = "click"
+
     SCROLL = "scroll"
+
     SESSION_START = "session_start"
+
     SESSION_END = "session_end"
+
     ADD_TO_CART = "add_to_cart"
+
     PURCHASE = "purchase"
 
 

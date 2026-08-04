@@ -12,6 +12,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.utils.logging_config import setup_logging
@@ -20,6 +21,7 @@ from app.api.auth import router as auth_router
 from app.api.products import router as products_router
 from app.api.admin import router as admin_router
 from app.api.search import router as search_router
+from app.api.behavior import router as behavior_router
 
 # ---------------------------------------------------------
 # Configure Logging
@@ -67,6 +69,12 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+app.mount(
+    "/static",
+    StaticFiles(directory="app/static"),
+    name="static",
+)
+
 # ---------------------------------------------------------
 # API Routers
 # ---------------------------------------------------------
@@ -75,6 +83,7 @@ app.include_router(auth_router)
 app.include_router(products_router)
 app.include_router(admin_router)
 app.include_router(search_router)
+app.include_router(behavior_router)
 # ---------------------------------------------------------
 # Static Files
 # ---------------------------------------------------------
