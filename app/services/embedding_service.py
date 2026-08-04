@@ -1,7 +1,7 @@
 """
 Embedding service for SmartReco.
 
-Provides semantic vector storage using
+Provides semantic search functionality using
 Sentence Transformers and ChromaDB.
 """
 
@@ -22,11 +22,15 @@ logger = logging.getLogger(__name__)
 
 class EmbeddingService:
     """
-    Singleton service responsible for
-    creating and searching embeddings.
+    Handles embedding generation and
+    ChromaDB operations.
     """
 
     def __init__(self) -> None:
+        """
+        Initialize embedding model and ChromaDB.
+        """
+
         logger.info(
             "Loading embedding model: %s",
             settings.EMBEDDING_MODEL,
@@ -36,35 +40,37 @@ class EmbeddingService:
             settings.EMBEDDING_MODEL,
         )
 
-        chroma_dir = Path(
+        chroma_path = Path(
             settings.CHROMA_PERSIST_DIR
         )
 
-        chroma_dir.mkdir(
+        chroma_path.mkdir(
             parents=True,
             exist_ok=True,
         )
 
         self.client = chromadb.PersistentClient(
-            path=str(chroma_dir),
+            path=str(chroma_path),
             settings=ChromaSettings(
                 anonymized_telemetry=False,
             ),
         )
 
-        self.collection = self.client.get_or_create_collection(
-            name="products",
-            metadata={
-                "hnsw:space": "cosine",
-            },
+        self.collection = (
+            self.client.get_or_create_collection(
+                name="products",
+                metadata={
+                    "hnsw:space": "cosine",
+                },
+            )
         )
 
         logger.info(
-            "Embedding service initialized successfully."
+            "Embedding service initialized."
         )
-
+        
     # ======================================================
-    # Build Product Text
+    # Build Search Document
     # ======================================================
 
     def build_document(
@@ -72,7 +78,7 @@ class EmbeddingService:
         product: Any,
     ) -> str:
         """
-        Convert a product into searchable text.
+        Convert a Product into searchable text.
         """
 
         parts: list[str] = []
@@ -89,9 +95,10 @@ class EmbeddingService:
             )
 
         if getattr(product, "category", None):
-            parts.append(
-                f"Category {product.category.name}"
-            )
+            if product.category:
+                parts.append(
+                    f"Category {product.category.name}"
+                )
 
         parts.append(
             f"Price {product.price}"
@@ -114,32 +121,41 @@ class EmbeddingService:
     def build_metadata(
         self,
         product: Any,
-    ) -> dict:
+    ) -> dict[str, Any]:
+        """
+        Metadata stored alongside the embedding.
+        """
 
         return {
             "product_id": product.id,
             "name": product.name,
-            "price": product.price,
-            "category_id": (
-                product.category_id
-                if product.category_id
-                else 0
-            ),
+            "price": float(product.price),
+            "rating": float(product.rating),
             "difficulty": (
                 product.difficulty
                 if product.difficulty
                 else ""
             ),
-            "rating": product.rating,
+            "category_id": (
+                int(product.category_id)
+                if product.category_id is not None
+                else 0
+            ),
+            "category_name": (
+                product.category.name
+                if getattr(product, "category", None)
+                else ""
+            ),
             "image_url": (
                 product.image_url
                 if product.image_url
                 else ""
             ),
+            "is_active": bool(product.is_active),
         }
-
+        
     # ======================================================
-    # Create Embedding
+    # Generate Embedding
     # ======================================================
 
     def embed_text(
@@ -147,12 +163,66 @@ class EmbeddingService:
         text: str,
     ) -> list[float]:
         """
-        Generate embedding vector.
+        Generate a vector embedding for text.
         """
 
-        return self.model.encode(
+        embedding = self.model.encode(
             text,
-        ).tolist()
+            normalize_embeddings=True,
+        )
+
+        return embedding.tolist()
+
+    # ======================================================
+    # Upsert Product
+    # ======================================================
+
+    def upsert_product(
+        self,
+        product: Any,
+    ) -> None:
+        """
+        Create or update a product embedding.
+        """
+
+        document = self.build_document(product)
+
+        embedding = self.embed_text(document)
+
+        metadata = self.build_metadata(product)
+
+        self.collection.upsert(
+            ids=[product.id],
+            documents=[document],
+            embeddings=[embedding],
+            metadatas=[metadata],
+        )
+
+        logger.info(
+            "Indexed product: %s",
+            product.name,
+        )
+
+    # ======================================================
+    # Delete Product
+    # ======================================================
+
+    def delete_product(
+        self,
+        product_id: str,
+    ) -> None:
+        """
+        Remove a product from ChromaDB.
+        """
+
+        self.collection.delete(
+            ids=[product_id],
+        )
+
+        logger.info(
+            "Deleted embedding for product %s",
+            product_id,
+        )
 
     # ======================================================
     # Collection Count
@@ -160,53 +230,22 @@ class EmbeddingService:
 
     def count(self) -> int:
         """
-        Return number of documents.
+        Return number of indexed products.
         """
 
         return self.collection.count()
     
-        # ======================================================
-    # Upsert Product
     # ======================================================
-
-    def upsert_product(self, product: Any) -> None:
-        """
-        Create or update a product embedding.
-        """
-
-        document = self.build_document(product)
-
-        self.collection.upsert(
-            ids=[product.id],
-            documents=[document],
-            embeddings=[self.embed_text(document)],
-            metadatas=[self.build_metadata(product)],
-        )
-
-    # ======================================================
-    # Delete Product
-    # ======================================================
-
-    def delete_product(self, product_id: str) -> None:
-        """
-        Remove a product embedding.
-        """
-
-        self.collection.delete(
-            ids=[product_id],
-        )
-
-    # ======================================================
-    # Search
+    # Semantic Search
     # ======================================================
 
     def search(
         self,
         query: str,
         limit: int = 5,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """
-        Perform semantic search.
+        Perform semantic similarity search.
         """
 
         query_embedding = self.embed_text(query)
@@ -214,4 +253,22 @@ class EmbeddingService:
         return self.collection.query(
             query_embeddings=[query_embedding],
             n_results=limit,
+        )
+
+    # ======================================================
+    # Get Indexed Product IDs
+    # ======================================================
+
+    def get_product_ids(
+        self,
+    ) -> list[str]:
+        """
+        Return all indexed product IDs.
+        """
+
+        data = self.collection.get()
+
+        return data.get(
+            "ids",
+            [],
         )

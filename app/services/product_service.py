@@ -1,18 +1,6 @@
-"""
-Product service for SmartReco.
-
-Contains all business logic for:
-
-- Create product
-- Retrieve product(s)
-- Update product
-- Delete product
-"""
-
 from __future__ import annotations
-import logging
 
-from app.services.embedding_service import EmbeddingService
+import logging
 import uuid
 
 from sqlalchemy.orm import Session, joinedload
@@ -20,14 +8,22 @@ from sqlalchemy.orm import Session, joinedload
 from app.models.category import Category
 from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductUpdate
+from app.services.embedding_service import get_embedding_service
 
 logger = logging.getLogger(__name__)
+
+
 class ProductService:
     """Business logic for product management."""
 
-    def __init__(self, db: Session):
+    def __init__(
+        self,
+        db: Session,
+    ):
         self.db = db
-        self.embedding_service = EmbeddingService()
+
+        # Singleton embedding service
+        self.embedding_service = get_embedding_service()
 
     # ==========================================================
     # Create Product
