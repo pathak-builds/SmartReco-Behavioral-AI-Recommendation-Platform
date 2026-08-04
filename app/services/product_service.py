@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import logging
 import uuid
-
+from typing import Optional
+from sqlalchemy import or_
+import math
 from sqlalchemy.orm import Session, joinedload
 
 from app.models.category import Category
@@ -272,4 +274,129 @@ class ProductService:
             )
             .order_by(Product.rating.desc())
             .all()
+        )
+        
+    # ==========================================================
+    # Search Products
+    # ==========================================================
+    def search_products(
+        self,
+        query: Optional[str] = None,
+        category_id: Optional[int] = None,
+        min_price: Optional[float] = None,
+        max_price: Optional[float] = None,
+        sort_by: str = "name",
+        page: int = 1,
+        page_size: int = 12,
+    ) -> tuple[list[Product], int, int]:
+        """
+        Search, filter, sort and paginate products.
+        Returns:
+            (
+                products,
+                total_products,
+                total_pages,
+            )
+        """
+
+        q = (
+            self.db.query(Product)
+            .options(joinedload(Product.category))
+            .filter(Product.is_active.is_(True))
+        )
+
+        # -------------------------------
+        # Text Search
+        # -------------------------------
+
+        if query:
+
+            term = f"%{query}%"
+
+            q = q.filter(
+                or_(
+                    Product.name.ilike(term),
+                    Product.description.ilike(term),
+                )
+            )
+
+        # -------------------------------
+        # Category
+        # -------------------------------
+
+        if category_id:
+
+            q = q.filter(
+                Product.category_id == category_id
+            )
+
+        # -------------------------------
+        # Price Filters
+        # -------------------------------
+
+        if min_price is not None:
+
+            q = q.filter(
+                Product.price >= min_price
+            )
+
+        if max_price is not None:
+
+            q = q.filter(
+                Product.price <= max_price
+            )
+
+        # -------------------------------
+        # Sorting
+        # -------------------------------
+
+        if sort_by == "price_asc":
+
+            q = q.order_by(
+                Product.price.asc()
+            )
+
+        elif sort_by == "price_desc":
+
+            q = q.order_by(
+                Product.price.desc()
+            )
+
+        elif sort_by == "newest":
+
+            q = q.order_by(
+                Product.created_at.desc()
+            )
+
+        else:
+
+            q = q.order_by(
+                Product.name.asc()
+            )
+
+        total = q.count()
+
+        total_pages = (
+            math.ceil(total / page_size)
+            if total
+            else 1
+        )
+
+        page = max(
+            1,
+            min(page, total_pages),
+        )
+
+        products = (
+            q.offset(
+                (page - 1) * page_size
+            )
+            .limit(page_size)
+            .all()
+        )
+
+        return (
+            products,
+            total,
+            total_pages,
         )

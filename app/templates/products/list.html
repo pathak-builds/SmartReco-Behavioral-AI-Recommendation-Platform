@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}
+Products
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="row mb-4">
+
+        <div class="col-md-8">
+
+            <h2>
+                Product Catalog
+            </h2>
+
+            <p class="text-muted">
+                {{ total }} products found
+            </p>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <form method="get">
+
+                <div class="input-group">
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="query"
+                        placeholder="Search products..."
+                        value="{{ query or '' }}"
+                    >
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        {% for product in products %}
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card h-100 shadow-sm">
+
+                {% if product.image_url %}
+
+                <img
+                    src="{{ product.image_url }}"
+                    class="card-img-top"
+                    alt="{{ product.name }}"
+                    style="height:220px;object-fit:cover;"
+                >
+
+                {% endif %}
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+
+                        {{ product.name }}
+
+                    </h5>
+
+                    <p class="text-muted">
+
+                        {{ product.category.name if product.category else "Uncategorized" }}
+
+                    </p>
+
+                    <p>
+
+                        {{ product.description[:120] }}...
+
+                    </p>
+
+                    <div class="mb-2">
+
+                        <span class="badge bg-primary">
+
+                            {{ product.difficulty }}
+
+                        </span>
+
+                        <span class="badge bg-warning text-dark">
+
+                            ⭐ {{ product.rating }}
+
+                        </span>
+
+                    </div>
+
+                    <h4 class="text-success">
+
+                        ${{ "%.2f"|format(product.price) }}
+
+                    </h4>
+
+                </div>
+
+                <div class="card-footer bg-white">
+
+                    <a
+                        href="/products/browse/{{ product.id }}"
+                        class="btn btn-outline-primary w-100"
+                    >
+                        View Details
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% if pages > 1 %}
+
+    <nav>
+
+        <ul class="pagination justify-content-center">
+
+            {% for p in range(1, pages + 1) %}
+
+            <li class="page-item {% if p == page %}active{% endif %}">
+
+                <a
+                    class="page-link"
+                    href="?page={{ p }}"
+                >
+                    {{ p }}
+                </a>
+
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

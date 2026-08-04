@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ product.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="row">
+
+        <!-- Product Image -->
+        <div class="col-lg-5">
+
+            {% if product.image_url %}
+
+            <img
+                src="{{ product.image_url }}"
+                class="img-fluid rounded shadow"
+                alt="{{ product.name }}"
+            >
+
+            {% else %}
+
+            <div
+                class="bg-light d-flex align-items-center justify-content-center rounded shadow"
+                style="height:400px;"
+            >
+                <h3 class="text-muted">
+                    No Image Available
+                </h3>
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- Product Information -->
+        <div class="col-lg-7">
+
+            <h2 class="mb-3">
+
+                {{ product.name }}
+
+            </h2>
+
+            {% if product.category %}
+
+            <p>
+
+                <strong>Category:</strong>
+
+                {{ product.category.name }}
+
+            </p>
+
+            {% endif %}
+
+            <p>
+
+                <strong>Difficulty:</strong>
+
+                <span class="badge bg-primary">
+
+                    {{ product.difficulty }}
+
+                </span>
+
+            </p>
+
+            <p>
+
+                <strong>Rating:</strong>
+
+                <span class="badge bg-warning text-dark">
+
+                    ⭐ {{ product.rating }}
+
+                </span>
+
+            </p>
+
+            <h3 class="text-success mb-4">
+
+                ${{ "%.2f"|format(product.price) }}
+
+            </h3>
+
+            <h5>Description</h5>
+
+            <p class="text-muted">
+
+                {{ product.description }}
+
+            </p>
+
+            {% if product.attributes %}
+
+            <hr>
+
+            <h5>Course Details</h5>
+
+            <table class="table table-bordered">
+
+                <tbody>
+
+                    {% for key, value in product.attributes.items() %}
+
+                    <tr>
+
+                        <th style="width:35%;">
+
+                            {{ key.replace("_"," ").title() }}
+
+                        </th>
+
+                        <td>
+
+                            {{ value }}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% endif %}
+
+            <div class="mt-4">
+
+                <a
+                    href="/products/browse"
+                    class="btn btn-secondary"
+                >
+                    ← Back to Products
+                </a>
+
+                <button
+                    class="btn btn-success"
+                    disabled
+                >
+                    Enroll Now
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

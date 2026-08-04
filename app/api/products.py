@@ -14,6 +14,16 @@ GET /products/{product_id}
 
 from __future__ import annotations
 
+from pathlib import Path
+
+from fastapi import Request
+from fastapi.templating import Jinja2Templates
+templates = Jinja2Templates(
+    directory=str(
+        Path(__file__).parent.parent / "templates"
+    )
+)
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
@@ -82,7 +92,89 @@ def list_products(
         for product in products
     ]
 
+# ==========================================================
+# Product Catalog Page
+# ==========================================================
 
+@router.get(
+    "/browse",
+    include_in_schema=False,
+)
+def browse_products(
+    request: Request,
+    page: int = 1,
+    query: str | None = None,
+    category_id: int | None = None,
+    min_price: float | None = None,
+    max_price: float | None = None,
+    sort_by: str = "name",
+    db: Session = Depends(get_db),
+):
+    """
+    Render product catalog page.
+    """
+
+    service = ProductService(db)
+
+    products, total, total_pages = (
+        service.search_products(
+            query=query,
+            category_id=category_id,
+            min_price=min_price,
+            max_price=max_price,
+            sort_by=sort_by,
+            page=page,
+        )
+    )
+
+    return templates.TemplateResponse(
+        "products/list.html",
+        {
+            "request": request,
+            "products": products,
+            "total": total,
+            "page": page,
+            "pages": total_pages,
+            "query": query,
+            "sort_by": sort_by,
+        },
+    )
+    
+# ==========================================================
+# Product Detail Page
+# ==========================================================
+
+@router.get(
+    "/browse/{product_id}",
+    include_in_schema=False,
+)
+def product_detail(
+    product_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """
+    Render product detail page.
+    """
+
+    service = ProductService(db)
+
+    product = service.get_product(product_id)
+
+    if product is None:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found.",
+        )
+
+    return templates.TemplateResponse(
+        "products/detail.html",
+        {
+            "request": request,
+            "product": product,
+        },
+    )
 # ==========================================================
 # Get Product
 # ==========================================================
@@ -127,3 +219,4 @@ def get_product(
         created_at=product.created_at,
         updated_at=product.updated_at,
     )
+    
