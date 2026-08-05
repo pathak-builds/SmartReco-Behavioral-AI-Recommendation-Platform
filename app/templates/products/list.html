@@ -345,44 +345,140 @@ if (typeof sessionId !== "undefined") {
 
 }
 
-function showRecommendations(data) {
+function showRecommendations(data){
 
     const container =
-        document.getElementById("recommendations");
+        document.getElementById(
+            "recommendations"
+        );
 
-    if (!data.length) {
+    if(!data.length){
 
         container.innerHTML = `
+
             <div class="alert alert-info">
-                No recommendations found.
+
+                No recommendations available.
+
             </div>
+
         `;
 
         return;
 
     }
 
-    container.innerHTML = "";
+    container.innerHTML="";
 
-    data.slice(0,3).forEach(item => {
+    data.slice(0,3).forEach(item=>{
 
-        container.innerHTML += `
-            <div class="card mb-3 shadow-sm">
+        const p = item.product.metadata;
 
-                <div class="card-body">
+        const score =
+            Math.round(
+                item.score*100
+            );
 
-                    <h5>${item.product.metadata.name}</h5>
+        const card = document.createElement("div");
 
-                    <p>${item.explanation}</p>
+        card.className =
+            "card shadow-lg mb-4";
 
-                    <span class="badge bg-success">
-                        AI Score ${item.score}
-                    </span>
+        card.innerHTML = `
 
-                </div>
+<div class="row g-0">
 
-            </div>
-        `;
+<div class="col-md-4">
+
+<img
+src="${p.image_url}"
+class="img-fluid rounded-start"
+style="height:100%;object-fit:cover;"
+>
+
+</div>
+
+<div class="col-md-8">
+
+<div class="card-body">
+
+<h4>
+
+${p.name}
+
+</h4>
+
+<p class="text-muted">
+
+${p.category_name}
+
+</p>
+
+<span class="badge bg-primary">
+
+${p.difficulty}
+
+</span>
+
+<span class="badge bg-warning text-dark">
+
+⭐ ${p.rating}
+
+</span>
+
+<h5 class="mt-3 text-success">
+
+$${p.price}
+
+</h5>
+
+<hr>
+
+<h6>
+
+Why this recommendation
+
+</h6>
+
+<p>
+
+${item.explanation}
+
+</p>
+
+<div class="progress mb-3">
+
+<div
+class="progress-bar"
+
+style="width:${score}%"
+
+>
+
+${score}%
+
+</div>
+
+</div>
+
+<a
+href="/products/browse/${p.product_id}"
+class="btn btn-primary"
+>
+
+View Course
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+        container.appendChild(card);
 
     });
 

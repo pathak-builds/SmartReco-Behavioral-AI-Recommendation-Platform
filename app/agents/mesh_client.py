@@ -11,6 +11,10 @@ without changing the agents.
 
 from __future__ import annotations
 
+from openai import OpenAI
+
+from app.config import settings
+
 from abc import ABC, abstractmethod
 import logging
 
@@ -68,28 +72,65 @@ class MockMeshClient(MeshClient):
 
 class RealMeshClient(MeshClient):
     """
-    Placeholder for production LLM.
+    Production Mesh API client.
     """
+
+    def __init__(self):
+
+        self.client = OpenAI(
+
+            base_url=settings.MESH_API_URL,
+
+            api_key=settings.MESH_API_KEY,
+
+        )
 
     def generate(
         self,
         prompt: str,
     ) -> str:
 
-        raise NotImplementedError(
-            "RealMeshClient not implemented yet."
+        logger.info(
+            "Calling Mesh API..."
         )
+
+        response = self.client.chat.completions.create(
+
+            model=settings.MODEL_NAME,
+
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+
+            temperature=0.3,
+
+            max_tokens=250,
+
+        )
+
+        return response.choices[0].message.content
         
 # ==========================================================
 # Factory
 # ==========================================================
 
+from app.config import settings
+
+
 def get_mesh_client() -> MeshClient:
     """
-    Return the mesh client.
-
-    Later this can read settings
-    and choose OpenAI/Groq/Ollama.
+    Return the configured AI client.
     """
+
+    if settings.LLM_PROVIDER.lower() == "mesh":
+
+        logger.info("Using Mesh API")
+
+        return RealMeshClient()
+
+    logger.info("Using Mock Mesh Client")
 
     return MockMeshClient()

@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from app.agents.graph import RecommendationGraph
 from app.models.behavior import BehaviorEvent
+from app.models.recommendation import Recommendation
 
 
 class RecommendationService:
@@ -107,6 +108,53 @@ class RecommendationService:
             state
         )
 
-        return result[
+        recommendations = result[
             "recommendations"
         ]
+
+        self._save_recommendations(
+            recommendations=recommendations,
+            user_id=user_id,
+        )
+
+        return recommendations
+        
+    def _save_recommendations(
+        self,
+        recommendations: list[dict],
+        user_id: str | None,
+    ) -> None:
+        
+        print("=" * 60)
+        print("USER ID:", user_id)
+        print("=" * 60)
+        """
+        Persist generated recommendations.
+        """
+
+        if user_id is None:
+            return
+
+        for item in recommendations:
+
+            recommendation = Recommendation(
+
+                user_id=user_id,
+
+                product_id=item["product"]["product_id"],
+
+                confidence_score=item["score"],
+
+                explanation=item["explanation"],
+
+                recommendation_context={
+                    "metadata": item["product"]["metadata"],
+                },
+
+            )
+
+            self.db.add(
+                recommendation
+            )
+
+        self.db.commit()

@@ -65,12 +65,14 @@ class Settings(BaseSettings):
     # ==========================================================
     # AI / Mesh API
     # ==========================================================
+
+    LLM_PROVIDER: str = "mock"
+
     MESH_API_URL: str = "https://api.meshapi.ai/v1"
 
     MESH_API_KEY: Optional[str] = None
 
     MODEL_NAME: str = "openai/gpt-4.1-mini"
-
     # ==========================================================
     # Logging
     # ==========================================================
