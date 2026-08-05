@@ -22,6 +22,9 @@ from app.api.products import router as products_router
 from app.api.admin import router as admin_router
 from app.api.search import router as search_router
 from app.api.behavior import router as behavior_router
+from app.api.recommendation import (
+    router as recommendations_router,
+)
 
 # ---------------------------------------------------------
 # Configure Logging
@@ -84,6 +87,9 @@ app.include_router(products_router)
 app.include_router(admin_router)
 app.include_router(search_router)
 app.include_router(behavior_router)
+app.include_router(
+    recommendations_router
+)
 # ---------------------------------------------------------
 # Static Files
 # ---------------------------------------------------------

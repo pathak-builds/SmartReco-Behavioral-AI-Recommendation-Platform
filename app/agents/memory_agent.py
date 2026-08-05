@@ -45,7 +45,7 @@ class MemoryAgent:
 
                 if topic_counter
 
-                else None,
+                else "",
 
             "favorite_topics":
 

@@ -9,7 +9,6 @@ from __future__ import annotations
 
 
 class RecommendationStrategist:
-
     """
     Hybrid recommendation ranking.
     """
@@ -51,14 +50,12 @@ class RecommendationStrategist:
         # Favorite Topic Match
         # -------------------------------
 
-        favorite = profile.get(
-            "favorite_topic",
-            "",
+        favorite = str(
+            profile.get("favorite_topic") or ""
         ).lower()
 
-        category = metadata.get(
-            "category_name",
-            "",
+        category = str(
+            metadata.get("category_name") or ""
         ).lower()
 
         if favorite and favorite in category:
@@ -69,14 +66,12 @@ class RecommendationStrategist:
         # Difficulty Preference
         # -------------------------------
 
-        summary = profile.get(
-            "summary",
-            "",
+        summary = str(
+            profile.get("summary") or ""
         ).lower()
 
-        difficulty = metadata.get(
-            "difficulty",
-            "",
+        difficulty = str(
+            metadata.get("difficulty") or ""
         ).lower()
 
         if difficulty and difficulty in summary:

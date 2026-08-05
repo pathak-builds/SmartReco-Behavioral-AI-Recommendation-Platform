@@ -31,7 +31,7 @@ class BehaviorAnalyst:
         events: list[BehaviorEvent],
     ) -> dict:
         """
-        Analyze user behavior.
+        Analyze user behavior and infer interests.
         """
 
         if not events:
@@ -45,30 +45,41 @@ class BehaviorAnalyst:
             }
 
         search_queries = []
-
         viewed_products = []
-
         pages = []
+        topics = []
 
         for event in events:
 
             if event.search_query:
-                search_queries.append(
-                    event.search_query
+
+                query = event.search_query.strip()
+
+                search_queries.append(query)
+
+                topics.extend(
+                    query.split()
                 )
 
             if event.product_id:
+
                 viewed_products.append(
                     event.product_id
                 )
 
             if event.page_url:
+
                 pages.append(
                     event.page_url
                 )
 
         product_counter = Counter(
             viewed_products
+        )
+
+        topic_counter = Counter(
+            t.lower()
+            for t in topics
         )
 
         prompt = f"""
@@ -88,28 +99,34 @@ Viewed Products:
 Summarize the user's interests in one paragraph.
 """
 
-        summary = self.client.generate(
-            prompt
-        )
+        summary = self.client.generate(prompt)
 
         return {
 
             "summary": summary,
 
-            "favorite_topics":
-                search_queries,
+            "favorite_topics": [
 
-            "favorite_products":
-                [
-                    product
-                    for product, _
-                    in product_counter.most_common(5)
-                ],
+                topic
 
-            "search_queries":
-                search_queries,
+                for topic, _
 
-            "activity_score":
-                len(events),
+                in topic_counter.most_common(10)
+
+            ],
+
+            "favorite_products": [
+
+                product
+
+                for product, _
+
+                in product_counter.most_common(5)
+
+            ],
+
+            "search_queries": search_queries,
+
+            "activity_score": len(events),
 
         }
