@@ -9,10 +9,13 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
+from fastapi import HTTPException
+
+
 from app.agents.graph import RecommendationGraph
 from app.models.behavior import BehaviorEvent
 from app.models.recommendation import Recommendation
-
+from app.models.recommendation import FeedbackType
 
 class RecommendationService:
     """
@@ -125,9 +128,7 @@ class RecommendationService:
         user_id: str | None,
     ) -> None:
         
-        print("=" * 60)
-        print("USER ID:", user_id)
-        print("=" * 60)
+        
         """
         Persist generated recommendations.
         """
@@ -158,3 +159,41 @@ class RecommendationService:
             )
 
         self.db.commit()
+        
+    # ======================================================
+    # Recommendation Feedback
+    # ======================================================
+
+    def update_feedback(
+        self,
+        recommendation_id: str,
+        feedback: str,
+        user_id: str,
+    ) -> Recommendation:
+        """
+        Update user feedback for a recommendation.
+        """
+
+        recommendation = (
+            self.db.query(Recommendation)
+            .filter(
+                Recommendation.id == recommendation_id,
+                Recommendation.user_id == user_id,
+            )
+            .first()
+        )
+
+        if recommendation is None:
+            raise HTTPException(
+            status_code=404,
+            detail="Recommendation not found.",
+        )
+
+        recommendation.feedback = FeedbackType(feedback)
+        self.db.commit()
+
+        self.db.refresh(
+            recommendation
+        )
+
+        return recommendation
