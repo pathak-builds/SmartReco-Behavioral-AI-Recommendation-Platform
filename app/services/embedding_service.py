@@ -273,6 +273,54 @@ class EmbeddingService:
             [],
         )
         
+        
+    # ======================================================
+    # Semantic Retrieval
+    # ======================================================
+
+    def semantic_search(
+        self,
+        query: str,
+        limit: int = 10,
+    ) -> list[dict[str, Any]]:
+        """
+        Perform semantic search and return
+        simplified product dictionaries.
+        """
+
+        results = self.search(
+            query=query,
+            limit=limit,
+        )
+
+        ids = results.get("ids", [[]])[0]
+
+        metadatas = results.get("metadatas", [[]])[0]
+
+        distances = results.get("distances", [[]])[0]
+
+        documents = results.get("documents", [[]])[0]
+
+        output = []
+
+        for product_id, metadata, distance, document in zip(
+            ids,
+            metadatas,
+            distances,
+            documents,
+        ):
+
+            output.append(
+                {
+                    "product_id": product_id,
+                    "document": document,
+                    "metadata": metadata,
+                    "distance": distance,
+                }
+            )
+
+        return output
+        
 # ==========================================================
 # Singleton Instance
 # ==========================================================
