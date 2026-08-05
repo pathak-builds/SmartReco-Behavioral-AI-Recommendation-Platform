@@ -163,6 +163,26 @@
 
 window.PRODUCT_ID = "{{ product.id }}";
 
+// Record product view AFTER product ID exists
+
+if (typeof sendEvent === "function") {
+
+    sendEvent(
+
+        "product_view",
+
+        {
+
+            product_id: window.PRODUCT_ID,
+
+            page: window.location.pathname,
+
+        }
+
+    );
+
+}
+
 </script>
 
 {% endblock %}

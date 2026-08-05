@@ -105,7 +105,7 @@ def browse_products(
     request: Request,
     page: int = 1,
     query: str | None = None,
-    category_id: int | None = None,
+    category_id: str | None = None,
     difficulty: str | None = None,
     min_price: float | None = None,
     max_price: float |None = None,
@@ -115,7 +115,22 @@ def browse_products(
     """
     Render product catalog page.
     """
+    # ---------------------------------------------
+    # Normalize optional filters
+    # ---------------------------------------------
 
+    if category_id == "":
+        category_id = None
+    elif category_id is not None:
+        category_id = int(category_id)
+
+    if difficulty == "":
+        difficulty = None
+
+    if query == "":
+        query = None
+        
+        
     service = ProductService(db)
 
     products, total, total_pages = (

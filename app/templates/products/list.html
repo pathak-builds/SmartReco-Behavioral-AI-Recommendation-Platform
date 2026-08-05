@@ -6,6 +6,24 @@ Products
 
 {% block content %}
 
+<div id="recommendation-section">
+
+    <h2 class="mb-4">
+
+        ⭐ Recommended For You
+
+    </h2>
+
+    <div id="recommendations">
+
+        <p>Loading recommendations...</p>
+
+    </div>
+
+</div>
+
+<hr class="my-5">
+
 <div class="container mt-4">
 
     <div class="row mb-4">
@@ -268,6 +286,7 @@ Products
     </div>
 
     <!-- Pagination -->
+    <!-- Pagination -->
     {% if pages > 1 %}
 
     <nav>
@@ -296,5 +315,79 @@ Products
     {% endif %}
 
 </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+if (typeof sessionId !== "undefined") {
+
+    fetch(`/recommendations/?session_id=${sessionId}`)
+
+        .then(response => response.json())
+
+        .then(showRecommendations)
+
+        .catch(error => {
+
+            console.error(error);
+
+            document.getElementById("recommendations").innerHTML = `
+                <div class="alert alert-warning">
+                    Failed to load recommendations.
+                </div>
+            `;
+
+        });
+
+}
+
+function showRecommendations(data) {
+
+    const container =
+        document.getElementById("recommendations");
+
+    if (!data.length) {
+
+        container.innerHTML = `
+            <div class="alert alert-info">
+                No recommendations found.
+            </div>
+        `;
+
+        return;
+
+    }
+
+    container.innerHTML = "";
+
+    data.slice(0,3).forEach(item => {
+
+        container.innerHTML += `
+            <div class="card mb-3 shadow-sm">
+
+                <div class="card-body">
+
+                    <h5>${item.product.metadata.name}</h5>
+
+                    <p>${item.explanation}</p>
+
+                    <span class="badge bg-success">
+                        AI Score ${item.score}
+                    </span>
+
+                </div>
+
+            </div>
+        `;
+
+    });
+
+}
+
+</script>
 
 {% endblock %}

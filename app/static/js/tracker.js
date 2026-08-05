@@ -107,27 +107,34 @@ const searchForm =
 if (searchForm) {
 
     searchForm.addEventListener(
-        "submit",
-        function () {
+    "submit",
+    function () {
 
-            const input =
-                document.querySelector(
-                    "input[name='query']"
-                );
+        const input =
+            document.querySelector(
+                "input[name='query']"
+            );
 
-            if (input) {
+        if (input && input.value.trim() !== "") {
 
-                sendEvent(
-                    "search",
-                    {
-                        query: input.value
-                    }
-                );
+            sendEvent(
 
-            }
+                "search",
+
+                {
+
+                    query: input.value.trim(),
+
+                    page: window.location.pathname,
+
+                }
+
+            );
 
         }
-    );
+
+    }
+);
 
 }
 

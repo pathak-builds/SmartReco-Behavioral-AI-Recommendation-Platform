@@ -107,7 +107,7 @@ class BehaviorService:
                 BehaviorEvent.session_id == session_id,
             )
             .order_by(
-                BehaviorEvent.timestamp.asc(),
+                BehaviorEvent.event_timestamp.asc(),
             )
             .all()
         )
@@ -130,7 +130,7 @@ class BehaviorService:
                 BehaviorEvent.user_id == user_id,
             )
             .order_by(
-                BehaviorEvent.timestamp.desc(),
+                BehaviorEvent.event_timestamp.desc(),
             )
             .all()
         )
