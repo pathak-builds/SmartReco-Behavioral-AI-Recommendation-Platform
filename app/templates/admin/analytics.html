@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+
+{% block title %}
+Analytics Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1 class="mb-4">
+        📊 Analytics Dashboard
+    </h1>
+
+    <div class="row g-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Total Users</h6>
+                    <h2>{{ total_users }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Total Products</h6>
+                    <h2>{{ total_products }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Behavior Events</h6>
+                    <h2>{{ total_behavior_events }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h6>Recommendations</h6>
+                    <h2>{{ total_recommendations }}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Behavior Events -->
+
+    <div class="row mt-5">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+
+                        Behavior Events
+
+                    </h4>
+
+                    <canvas id="behaviorChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Recommendation Feedback -->
+
+    <div class="row mt-4">
+
+        <div class="col-lg-5">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+
+                        Recommendation Feedback
+
+                    </h4>
+
+                    <canvas id="feedbackChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Top Viewed Products -->
+
+    <div class="row mt-4">
+
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+
+                        🏆 Top Viewed Products
+
+                    </h4>
+
+                    <canvas id="topProductsChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Recommendation Trend -->
+
+    <div class="row mt-4">
+
+        <div class="col-lg-12">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+
+                        📈 Recommendation Trend
+
+                    </h4>
+
+                    <canvas id="trendChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <div class="row mt-4">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body">
+
+                    <h4 class="mb-3">
+
+                        🔍 Top Search Queries
+
+                    </h4>
+
+                    <canvas id="searchChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+//
+// Behavior Events Chart
+//
+
+const labels = {{ event_labels | tojson }};
+const values = {{ event_values | tojson }};
+
+new Chart(
+
+    document.getElementById("behaviorChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+
+                    label: "Events",
+
+                    data: values,
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+//
+// Recommendation Feedback Chart
+//
+
+const feedbackLabels = {{ feedback_labels | tojson }};
+const feedbackValues = {{ feedback_values | tojson }};
+
+new Chart(
+
+    document.getElementById("feedbackChart"),
+
+    {
+
+        type: "pie",
+
+        data: {
+
+            labels: feedbackLabels,
+
+            datasets: [
+
+                {
+
+                    data: feedbackValues
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true
+
+        }
+
+    }
+
+);
+
+
+//
+// Top Viewed Products Chart
+//
+
+const topLabels = {{ top_product_labels | tojson }};
+const topValues = {{ top_product_values | tojson }};
+
+new Chart(
+
+    document.getElementById("topProductsChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: topLabels,
+
+            datasets: [
+
+                {
+
+                    label: "Views",
+
+                    data: topValues
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            indexAxis: "y",
+
+            plugins: {
+
+                legend: {
+
+                    display: true
+
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+//
+// Recommendation Trend Chart
+//
+
+const trendLabels = {{ trend_labels | tojson }};
+const trendValues = {{ trend_values | tojson }};
+
+new Chart(
+
+    document.getElementById("trendChart"),
+
+    {
+
+        type: "line",
+
+        data: {
+
+            labels: trendLabels,
+
+            datasets: [
+
+                {
+
+                    label: "Recommendations",
+
+                    data: trendValues,
+
+                    tension: 0.3,
+
+                    fill: false
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true
+
+        }
+
+    }
+
+);
+
+const searchLabels = {{ search_labels | tojson }};
+const searchValues = {{ search_values | tojson }};
+
+new Chart(
+    document.getElementById("searchChart"),
+    {
+        type: "bar",
+        data: {
+            labels: searchLabels,
+            datasets: [{
+                label: "Search Count",
+                data: searchValues
+            }]
+        },
+        options: {
+            responsive: true,
+            indexAxis: "y"
+        }
+    }
+);
+
+</script>
+
+{% endblock %}

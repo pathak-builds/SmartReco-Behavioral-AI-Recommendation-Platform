@@ -23,6 +23,7 @@ from app.api.admin import router as admin_router
 from app.api.search import router as search_router
 from app.api.behavior import router as behavior_router
 from app.api.pages import router as pages_router
+from app.api.analytics import router as analytics_router
 from app.api.recommendation import (
     router as recommendations_router,
 )
@@ -88,6 +89,7 @@ app.include_router(products_router)
 app.include_router(admin_router)
 app.include_router(search_router)
 app.include_router(behavior_router)
+app.include_router(analytics_router)
 app.include_router(
     recommendations_router
 )
