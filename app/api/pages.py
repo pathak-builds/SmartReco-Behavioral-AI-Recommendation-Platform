@@ -33,6 +33,11 @@ def recommendation_history(
     current_user: User | None = Depends(get_optional_user),
 ):
     recommendations = []
+    
+    print("=" * 60)
+    print("CURRENT USER:", current_user)
+    print("COOKIES:", request.cookies)
+    print("=" * 60)
 
     if current_user:
         service = RecommendationService(db)

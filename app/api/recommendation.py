@@ -99,20 +99,20 @@ def submit_feedback(
         message="Feedback saved successfully."
     )
     
-@router.get("/history")
-def get_recommendation_history(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    """
-    Return recommendation history for the current user.
-    """
+# @router.get("/history")
+# def get_recommendation_history(
+#     db: Session = Depends(get_db),
+#     current_user: User = Depends(get_current_user),
+# ):
+#     """
+#     Return recommendation history for the current user.
+#     """
 
-    service = RecommendationService(db)
+#     service = RecommendationService(db)
 
-    return service.get_history(
-        user_id=str(current_user.id),
-    )
+#     return service.get_history(
+#         user_id=str(current_user.id),
+#     )
     
 @router.get("/page")
 def recommendation_history_page(

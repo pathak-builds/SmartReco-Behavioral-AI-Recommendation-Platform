@@ -10,6 +10,8 @@ Provides reusable FastAPI dependencies for:
 
 from __future__ import annotations
 
+
+from fastapi import Request
 from fastapi import (
     Depends,
     HTTPException,
@@ -108,9 +110,8 @@ def get_current_user(
 # ==========================================================
 
 def get_optional_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(
-        optional_bearer
-    ),
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(optional_bearer),
     db: Session = Depends(get_db),
 ) -> User | None:
     """
@@ -124,10 +125,15 @@ def get_optional_user(
     behavioral events.
     """
 
-    if credentials is None:
-        return None
+    token = None
 
-    token = credentials.credentials
+    if credentials is not None:
+        token = credentials.credentials
+    else:
+        token = request.cookies.get("access_token")
+
+    if token is None:
+        return None
 
     try:
 
