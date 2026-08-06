@@ -138,13 +138,21 @@ def get_optional_user(
     try:
 
         payload = validate_access_token(token)
+        
+        print("=" * 60)
+        print("PAYLOAD:", payload)
+        print("=" * 60)
 
         user_id = payload.get("sub")
 
         if user_id is None:
             return None
 
-    except JWTError:
+    except Exception as e:
+        print("=" * 60)
+        print("TOKEN:", token)
+        print("ERROR:", repr(e))
+        print("=" * 60)
         return None
 
     auth_service = AuthService(db)

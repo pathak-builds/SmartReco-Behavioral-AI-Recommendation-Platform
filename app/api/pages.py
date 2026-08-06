@@ -46,6 +46,11 @@ def recommendation_history(
             user_id=str(current_user.id),
         )
 
+    print("=" * 60)
+    print("CURRENT USER:", current_user)
+    print("NUMBER OF RECOMMENDATIONS:", len(recommendations))
+    print("=" * 60)
+
     return templates.TemplateResponse(
         "recommendations/history.html",
         {

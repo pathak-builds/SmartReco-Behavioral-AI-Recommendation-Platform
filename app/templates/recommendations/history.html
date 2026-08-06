@@ -27,51 +27,69 @@
 
         {% for recommendation in recommendations %}
 
-        <div class="card mb-3">
+        <div class="card mb-4 shadow-sm">
 
-            <div class="card-body">
+            <div class="row g-0">
 
-                <h5>
-                    {{ recommendation.recommendation_context.metadata.name }}
-                </h5>
+                <div class="col-md-3">
 
-                <p>
-                    <strong>Category:</strong>
-                    {{ recommendation.recommendation_context.metadata.category_name }}
-                </p>
+                    <img
+                        src="{{ recommendation.recommendation_context.metadata.image_url }}"
+                        class="img-fluid rounded-start"
+                        alt="Product Image"
+                    >
 
-                <p>
-                    <strong>Difficulty:</strong>
-                    {{ recommendation.recommendation_context.metadata.difficulty }}
-                </p>
+                </div>
 
-                <p>
-                    <strong>Price:</strong>
-                    ₹{{ recommendation.recommendation_context.metadata.price }}
-                </p>
+                <div class="col-md-9">
 
-                <p>
-                    <strong>Rating:</strong>
-                    ⭐ {{ recommendation.recommendation_context.metadata.rating }}
-                </p>
+                    <div class="card-body">
 
-                <p>
-                    <strong>Confidence:</strong>
-                    {{ "%.2f"|format(recommendation.confidence_score) }}
-                </p>
+                        <h5>
+                            {{ recommendation.recommendation_context.metadata.name }}
+                        </h5>
 
-                <p>
-                    <strong>Feedback:</strong>
-                    {{ recommendation.feedback.value }}
-                </p>
+                        <p>
+                            <strong>Category:</strong>
+                            {{ recommendation.recommendation_context.metadata.category_name }}
+                        </p>
 
-                <p>
-                    {{ recommendation.explanation }}
-                </p>
+                        <p>
+                            <strong>Difficulty:</strong>
+                            {{ recommendation.recommendation_context.metadata.difficulty }}
+                        </p>
 
-                <small class="text-muted">
-                    {{ recommendation.created_at }}
-                </small>
+                        <p>
+                            <strong>Price:</strong>
+                            ₹{{ recommendation.recommendation_context.metadata.price }}
+                        </p>
+
+                        <p>
+                            <strong>Rating:</strong>
+                            ⭐ {{ recommendation.recommendation_context.metadata.rating }}
+                        </p>
+
+                        <p>
+                            <strong>Confidence:</strong>
+                            {{ "%.2f"|format(recommendation.confidence_score) }}
+                        </p>
+
+                        <p>
+                            <strong>Feedback:</strong>
+                            {{ recommendation.feedback.value }}
+                        </p>
+
+                        <p>
+                            {{ recommendation.explanation }}
+                        </p>
+
+                        <small class="text-muted">
+                            {{ recommendation.created_at }}
+                        </small>
+
+                    </div>
+
+                </div>
 
             </div>
 
