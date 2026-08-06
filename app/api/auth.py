@@ -13,6 +13,14 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from fastapi import Request
+from fastapi.templating import Jinja2Templates
+from pathlib import Path
+from fastapi import Form
+from fastapi.responses import RedirectResponse
+
+
+
 
 from app.api.dependencies import get_current_user
 from app.database import get_db
@@ -30,6 +38,11 @@ router = APIRouter(
     tags=["Authentication"],
 )
 
+templates = Jinja2Templates(
+    directory=str(
+        Path(__file__).parent.parent / "templates"
+    )
+)
 
 # ==========================================================
 # Register
@@ -116,6 +129,61 @@ def get_current_authenticated_user(
     return current_user
 
 
+@router.get("/login-page")
+def login_page(
+    request: Request,
+):
+    """
+    Render browser login page.
+    """
+
+    return templates.TemplateResponse(
+        "auth/login.html",
+        {
+            "request": request,
+            "title": "Login",
+        },
+    )
+
+
+
+@router.post("/login-page")
+def login_page_submit(
+    username: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    """
+    Authenticate browser user.
+    """
+
+    auth_service = AuthService(db)
+
+    access_token = auth_service.login_user(
+        username=username,
+        password=password,
+    )
+
+    if access_token is None:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid username or password.",
+        )
+
+    response = RedirectResponse(
+        url="/",
+        status_code=303,
+    )
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+    )
+
+    return response
 # ==========================================================
 # Health Check
 # ==========================================================

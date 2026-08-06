@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5" style="max-width:500px;">
+
+    <h2 class="mb-4">
+        Login
+    </h2>
+
+    <form method="post" action="/auth/login-page">
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Username
+            </label>
+
+            <input
+                class="form-control"
+                name="username"
+                required
+            >
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Password
+            </label>
+
+            <input
+                class="form-control"
+                type="password"
+                name="password"
+                required
+            >
+
+        </div>
+
+        <button
+            class="btn btn-primary w-100"
+            type="submit"
+        >
+            Login
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

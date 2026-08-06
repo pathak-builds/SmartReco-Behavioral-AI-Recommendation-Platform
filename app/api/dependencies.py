@@ -9,7 +9,15 @@ Provides reusable FastAPI dependencies for:
 """
 
 from __future__ import annotations
-from fastapi import Depends, HTTPException, status
+
+from fastapi import (
+    Depends,
+    HTTPException,
+    status,
+    Cookie,
+)
+
+
 from fastapi.security import (
     OAuth2PasswordBearer,
     HTTPAuthorizationCredentials,
@@ -30,6 +38,7 @@ from app.utils.security import validate_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/auth/login",
+    auto_error=False,
 )
 
 # ==========================================================
@@ -55,13 +64,20 @@ credentials_exception = HTTPException(
 # ==========================================================
 
 def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    token: str | None = Depends(oauth2_scheme),
+    access_token: str | None = Cookie(default=None),
     db: Session = Depends(get_db),
 ) -> User:
     """
     Validate the JWT access token and return the authenticated user.
     """
+    if token is None:
+        token = access_token
 
+    if token is None:
+        raise credentials_exception
+    
+    
     try:
         payload = validate_access_token(token)
 

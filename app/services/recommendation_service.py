@@ -197,3 +197,26 @@ class RecommendationService:
         )
 
         return recommendation
+    
+    # ======================================================
+    # Recommendation History
+    # ======================================================
+
+    def get_history(
+        self,
+        user_id: str,
+    ):
+        """
+        Return recommendation history for a user.
+        """
+
+        return (
+            self.db.query(Recommendation)
+            .filter(
+                Recommendation.user_id == user_id
+            )
+            .order_by(
+                Recommendation.created_at.desc()
+            )
+            .all()
+        )

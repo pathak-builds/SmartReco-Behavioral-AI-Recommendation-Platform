@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2 class="mb-4">
+        Recommendation History
+    </h2>
+
+    <form
+        method="post"
+        action="/recommendations/refresh"
+        class="mb-4"
+    >
+
+        <button
+            class="btn btn-primary"
+            type="submit"
+        >
+            🔄 Refresh Recommendations
+        </button>
+
+    </form>
+
+    {% if recommendations %}
+
+        {% for recommendation in recommendations %}
+
+        <div class="card mb-3">
+
+            <div class="card-body">
+
+                <h5>
+                    {{ recommendation.recommendation_context.metadata.name }}
+                </h5>
+
+                <p>
+                    <strong>Category:</strong>
+                    {{ recommendation.recommendation_context.metadata.category_name }}
+                </p>
+
+                <p>
+                    <strong>Difficulty:</strong>
+                    {{ recommendation.recommendation_context.metadata.difficulty }}
+                </p>
+
+                <p>
+                    <strong>Price:</strong>
+                    ₹{{ recommendation.recommendation_context.metadata.price }}
+                </p>
+
+                <p>
+                    <strong>Rating:</strong>
+                    ⭐ {{ recommendation.recommendation_context.metadata.rating }}
+                </p>
+
+                <p>
+                    <strong>Confidence:</strong>
+                    {{ "%.2f"|format(recommendation.confidence_score) }}
+                </p>
+
+                <p>
+                    <strong>Feedback:</strong>
+                    {{ recommendation.feedback.value }}
+                </p>
+
+                <p>
+                    {{ recommendation.explanation }}
+                </p>
+
+                <small class="text-muted">
+                    {{ recommendation.created_at }}
+                </small>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="alert alert-info">
+            No recommendations found.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
