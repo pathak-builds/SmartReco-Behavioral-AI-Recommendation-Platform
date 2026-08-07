@@ -1,0 +1,136 @@
+/* ======================================================
+   SmartReco Theme
+====================================================== */
+
+body{
+
+    font-family: 'Inter', sans-serif;
+
+    background:#121212;
+
+    color:#f8f9fa;
+
+}
+
+/* ======================================================
+   Navbar
+====================================================== */
+
+.navbar{
+
+    background:#1f2329 !important;
+
+}
+
+.navbar-brand{
+
+    font-size:1.5rem;
+
+    font-weight:700;
+
+}
+
+.nav-link{
+
+    color:#d1d5db !important;
+
+    margin-left:15px;
+
+    transition:.3s;
+
+}
+
+.nav-link:hover{
+
+    color:#4f8cff !important;
+
+}
+
+/* ======================================================
+   Hero
+====================================================== */
+
+.hero-title span{
+
+    background: linear-gradient(
+        90deg,
+        #3b82f6,
+        #8b5cf6,
+        #06b6d4
+    );
+
+    background-clip: text;
+    -webkit-background-clip: text;
+
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+
+}
+
+/* ======================================================
+   Cards
+====================================================== */
+
+.card{
+
+    background:#181818;
+
+    border:1px solid #2c2c2c;
+
+    border-radius:18px;
+
+    transition:.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,.35);
+
+}
+
+/* ======================================================
+   Buttons
+====================================================== */
+
+.btn{
+
+    transition:.3s;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/* ======================================================
+   Images
+====================================================== */
+
+img{
+
+    transition:.4s;
+
+}
+
+img:hover{
+
+    transform:scale(1.02);
+
+}
+
+/* ======================================================
+   Footer
+====================================================== */
+
+footer{
+
+    background:#1f2329 !important;
+
+    color:white;
+
+}
