@@ -134,3 +134,30 @@ footer{
     color:white;
 
 }
+
+.recommendation-card{
+    border-radius:18px;
+    overflow:hidden;
+    transition:0.35s;
+}
+
+.recommendation-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 20px 45px rgba(0,0,0,.35);
+}
+
+.recommendation-card img{
+    transition:0.4s;
+}
+
+.recommendation-card:hover img{
+    transform:scale(1.03);
+}
+
+.progress{
+    border-radius:20px;
+}
+
+.progress-bar{
+    transition:width 1.2s ease;
+}
