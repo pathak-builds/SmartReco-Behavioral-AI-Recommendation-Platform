@@ -2,11 +2,15 @@
 <html lang="en">
 
 <head>
+
     <!-- ===================================================== -->
     <!-- Meta -->
     <!-- ===================================================== -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1">
 
     <title>
         {% block title %}
@@ -21,7 +25,9 @@
     <!-- ===================================================== -->
     <!-- Google Font -->
     <!-- ===================================================== -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
 
     <link
         rel="preconnect"
@@ -57,229 +63,379 @@
 
 <body>
 
-<!-- ===================================================== -->
-<!-- Navigation -->
-<!-- ===================================================== -->
+    <!-- ===================================================== -->
+    <!-- Navigation -->
+    <!-- ===================================================== -->
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
 
-    <div class="container">
+        <div class="container">
 
-        <a class="navbar-brand fw-bold" href="/">
+            <a
+                class="navbar-brand fw-bold"
+                href="/">
 
-            <i class="bi bi-stars"></i>
+                <i class="bi bi-stars"></i>
 
-            SmartReco
+                SmartReco
 
-        </a>
+            </a>
 
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbar"
-            aria-controls="navbar"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-        >
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbar"
+                aria-controls="navbar"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
 
-            <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
 
-        </button>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbar">
+            <div
+                class="collapse navbar-collapse"
+                id="navbar">
 
-            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
 
-                <li class="nav-item">
+                    <li class="nav-item">
 
-                    <a
-                        class="nav-link active"
-                        href="/"
-                    >
-                        Home
-                    </a>
+                        <a
+                            class="nav-link active"
+                            href="/">
 
-                </li>
+                            Home
 
-                <li class="nav-item">
+                        </a>
 
-                    <a
-                        class="nav-link"
-                        href="/recommendations/page"
-                    >
-                        Recommendations
-                    </a>
+                    </li>
 
-                </li>
+                    <li class="nav-item">
 
-                <!-- Phase 4 -->
-                <!--
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">
-                        Login
-                    </a>
-                </li>
+                        <a
+                            class="nav-link"
+                            href="/recommendations/page">
 
-                <li class="nav-item ms-lg-2">
-                    <a
-                        class="btn btn-primary btn-sm"
-                        href="/register"
-                    >
-                        Get Started
-                    </a>
-                </li>
-                -->
+                            Recommendations
 
-            </ul>
+                        </a>
 
-        </div>
+                    </li>
 
-    </div>
+                    <!-- Phase 4 -->
+                    <!--
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">
+                            Login
+                        </a>
+                    </li>
 
-</nav>
+                    <li class="nav-item ms-lg-2">
+                        <a
+                            class="btn btn-primary btn-sm"
+                            href="/register">
+                            Get Started
+                        </a>
+                    </li>
+                    -->
 
-<!-- ===================================================== -->
-<!-- Main -->
-<!-- ===================================================== -->
-
-<main class="container py-5">
-
-{% block content %}
-
-<section class="py-5">
-
-    <div class="row align-items-center">
-
-        <div class="col-lg-6">
-
-            <span class="badge bg-primary px-3 py-2 mb-3">
-
-                AI Powered Recommendation Platform
-
-            </span>
-
-            <h1 class="display-3 fw-bold mb-4">
-
-                Smart Recommendations
-
-                <span class="text-primary">
-
-                    Powered by Behavioral AI
-
-                </span>
-
-            </h1>
-
-            <p class="lead text-muted">
-
-                Discover personalized learning recommendations using
-                behavioral tracking, semantic search, LangGraph agents,
-                ChromaDB and modern LLM workflows.
-
-            </p>
-
-            <div class="mt-4">
-
-                <a href="/recommendations/page"
-                   class="btn btn-primary btn-lg me-3">
-
-                    <i class="bi bi-stars"></i>
-
-                    Explore Recommendations
-
-                </a>
-
-                <a href="/analytics"
-                   class="btn btn-outline-dark btn-lg">
-
-                    <i class="bi bi-graph-up-arrow"></i>
-
-                    Analytics Dashboard
-
-                </a>
+                </ul>
 
             </div>
 
         </div>
 
-        <div class="col-lg-6 text-center">
+    </nav>
 
-            <img
-                src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=900"
-                class="img-fluid rounded-4 shadow-lg"
-                style="max-height:500px; object-fit:cover;">
+    <!-- ===================================================== -->
+    <!-- Main Content -->
+    <!-- ===================================================== -->
+
+    <main class="container py-5">
+
+        {% block content %}
+
+        <!-- ======================================= -->
+        <!-- Hero Section -->
+        <!-- ======================================= -->
+
+        <section class="py-5">
+
+            <div class="row align-items-center">
+
+                <div class="col-lg-6">
+
+                    <span class="badge bg-primary px-3 py-2 mb-3">
+
+                        AI Powered Recommendation Platform
+
+                    </span>
+
+                    <h1 class="display-3 fw-bold mb-4">
+
+                        Smart Recommendations
+
+                        <span class="text-primary">
+
+                            Powered by Behavioral AI
+
+                        </span>
+
+                    </h1>
+
+                    <p class="lead text-muted">
+
+                        Discover personalized learning recommendations
+                        using behavioral tracking, semantic search,
+                        LangGraph agents, ChromaDB and modern LLM
+                        workflows.
+
+                    </p>
+
+                    <div class="mt-4">
+
+                        <a
+                            href="/recommendations/page"
+                            class="btn btn-primary btn-lg me-3">
+
+                            <i class="bi bi-stars"></i>
+
+                            Explore Recommendations
+
+                        </a>
+
+                        <a
+                            href="/analytics/dashboard"
+                            class="btn btn-outline-dark btn-lg">
+
+                            <i class="bi bi-graph-up-arrow"></i>
+
+                            Analytics Dashboard
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-6 text-center">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=900"
+                        class="img-fluid rounded-4 shadow-lg"
+                        style="max-height:500px; object-fit:cover;">
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ======================================= -->
+        <!-- Platform Statistics -->
+        <!-- ======================================= -->
+
+        <section class="py-5">
+
+            <div class="row text-center g-4">
+
+                <div class="col-md-3">
+
+                    <div class="card shadow-sm border-0 h-100">
+
+                        <div class="card-body">
+
+                            <i class="bi bi-people-fill display-4 text-primary mb-3"></i>
+
+                            <h2
+                                class="fw-bold counter"
+                                data-target="1200">
+
+                                0
+
+                            </h2>
+
+                            <p class="text-muted mb-0">
+
+                                Registered Users
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="card shadow-sm border-0 h-100">
+
+                        <div class="card-body">
+
+                            <i class="bi bi-box-seam display-4 text-success mb-3"></i>
+
+                            <h2
+                                class="fw-bold counter"
+                                data-target="350">
+
+                                0
+
+                            </h2>
+
+                            <p class="text-muted mb-0">
+
+                                AI Products
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="card shadow-sm border-0 h-100">
+
+                        <div class="card-body">
+
+                            <i class="bi bi-lightning-charge-fill display-4 text-warning mb-3"></i>
+
+                            <h2
+                                class="fw-bold counter"
+                                data-target="98">
+
+                                0
+
+                            </h2>
+
+                            <p class="text-muted mb-0">
+
+                                Recommendation Accuracy %
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="card shadow-sm border-0 h-100">
+
+                        <div class="card-body">
+
+                            <i class="bi bi-cpu-fill display-4 text-danger mb-3"></i>
+
+                            <h2
+                                class="fw-bold counter"
+                                data-target="24">
+
+                                0
+
+                            </h2>
+
+                            <p class="text-muted mb-0">
+
+                                AI Agents Running
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% endblock %}
+
+    </main>
+
+    <!-- ===================================================== -->
+    <!-- Footer -->
+    <!-- ===================================================== -->
+
+    <footer class="border-top py-4 mt-5 bg-light">
+
+        <div class="container text-center">
+
+            <small>
+
+                © 2026 SmartReco
+
+                ·
+
+                Built with ❤️ using
+
+                FastAPI
+
+                ·
+
+                LangGraph
+
+                ·
+
+                ChromaDB
+
+            </small>
 
         </div>
 
-    </div>
+    </footer>
 
-</section>
+    <!-- ===================================================== -->
+    <!-- Bootstrap JS -->
+    <!-- ===================================================== -->
 
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-</main>
+    {% block scripts %}
 
-<!-- ===================================================== -->
-<!-- Footer -->
-<!-- ===================================================== -->
+    <script>
 
-<footer class="bg-dark text-light mt-auto py-4">
+        document.querySelectorAll(".counter").forEach(counter => {
 
-    <div class="container text-center">
+            const target = +counter.dataset.target;
 
-        <small>
+            const speed = 200;
 
-            © 2026 SmartReco
+            const updateCount = () => {
 
-            ·
+                const count = +counter.innerText;
 
-            Built with ❤️ using
+                const increment = Math.ceil(target / speed);
 
-            FastAPI
+                if (count < target) {
 
-            ·
+                    counter.innerText = count + increment;
 
-            LangGraph
+                    setTimeout(updateCount, 10);
 
-            ·
+                } else {
 
-            ChromaDB
+                    counter.innerText = target;
 
-        </small>
+                }
 
-    </div>
+            };
 
-</footer>
+            updateCount();
 
-<!-- ===================================================== -->
-<!-- Bootstrap -->
-<!-- ===================================================== -->
+        });
 
-<script
-src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-</script>
+    </script>
 
-<!-- ===================================================== -->
-<!-- Custom JavaScript -->
-<!-- ===================================================== -->
-
-<script
-src="{{ url_for('static', path='js/app.js') }}">
-</script>
-
-
-
-<!-- ========================================= -->
-<!-- SmartReco Behavior Tracker -->
-<!-- ========================================= -->
-
-<script src="{{ url_for('static', path='js/tracker.js') }}"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-{% block scripts %}
-{% endblock %}
+    {% endblock %}
 
 </body>
 
