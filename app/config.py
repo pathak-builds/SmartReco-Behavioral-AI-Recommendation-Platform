@@ -67,12 +67,21 @@ class Settings(BaseSettings):
     # ==========================================================
 
     LLM_PROVIDER: str = "mock"
+    
+    # ---------- Mesh ----------
 
     MESH_API_URL: str = "https://api.meshapi.ai/v1"
 
     MESH_API_KEY: Optional[str] = None
+    
+    # ---------- Groq ----------
 
-    MODEL_NAME: str = "openai/gpt-4.1-mini"
+    GROQ_API_KEY: Optional[str] = None
+
+    # ---------- Model ----------
+
+    MODEL_NAME: str = "llama-3.3-70b-versatile"
+    
     # ==========================================================
     # Logging
     # ==========================================================

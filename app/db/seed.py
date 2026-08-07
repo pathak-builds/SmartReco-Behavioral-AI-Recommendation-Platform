@@ -104,7 +104,7 @@ def seed() -> None:
                 difficulty="Beginner",
                 rating=4.8,
                 category_id=ai.id,
-                image_url="https://placehold.co/600x400",
+                image_url="/static/images/genai.jpg",
                 attributes={
                     "duration": "35 hours",
                     "level": "Beginner",
@@ -120,7 +120,7 @@ def seed() -> None:
                 difficulty="Intermediate",
                 rating=4.9,
                 category_id=rag.id,
-                image_url="https://placehold.co/600x400",
+                image_url="/static/images/rag.jpg",
                 attributes={
                     "duration": "18 hours",
                     "level": "Intermediate",
@@ -136,7 +136,7 @@ def seed() -> None:
                 difficulty="Advanced",
                 rating=5.0,
                 category_id=langgraph.id,
-                image_url="https://placehold.co/600x400",
+                image_url="/static/images/langgraph.jpg",
                 attributes={
                     "duration": "22 hours",
                     "level": "Advanced",
@@ -152,7 +152,7 @@ def seed() -> None:
                 difficulty="Beginner",
                 rating=4.7,
                 category_id=python.id,
-                image_url="https://placehold.co/600x400",
+                image_url="/static/images/python.jpg",
                 attributes={
                     "duration": "25 hours",
                     "level": "Beginner",
@@ -168,7 +168,7 @@ def seed() -> None:
                 difficulty="Advanced",
                 rating=4.9,
                 category_id=llm.id,
-                image_url="https://placehold.co/600x400",
+                image_url="/static/images/llm.jpg",
                 attributes={
                     "duration": "28 hours",
                     "level": "Advanced",
