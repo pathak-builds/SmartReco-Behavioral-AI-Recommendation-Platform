@@ -474,6 +474,89 @@ erDiagram
     PRODUCTS ||--o{ RECOMMENDATIONS : recommended
 ```
 
+---
+
+# 🏗️ Overall System Architecture
+
+The following diagram illustrates how the frontend, backend, AI agents, databases, scheduler, and LLM work together to generate personalized recommendations.
+
+```mermaid
+flowchart TB
+
+    User([👤 User])
+
+    Frontend["🖥️ Jinja2 + Bootstrap Frontend"]
+
+    API["⚡ FastAPI Backend"]
+
+    Auth["🔐 Authentication"]
+
+    Products["📚 Product Service"]
+
+    Behavior["👀 Behavior Tracking"]
+
+    Analytics["📊 Analytics Service"]
+
+    Recommendation["🤖 Recommendation Service"]
+
+    LangGraph["🧠 LangGraph Workflow"]
+
+    Mesh["💬 Mesh API"]
+
+    Chroma["🔍 ChromaDB"]
+
+    SQLite["🗄️ SQLite Database"]
+
+    Scheduler["⏰ APScheduler"]
+
+    User --> Frontend
+
+    Frontend --> API
+
+    API --> Auth
+
+    API --> Products
+
+    API --> Behavior
+
+    API --> Analytics
+
+    API --> Recommendation
+
+    Recommendation --> LangGraph
+
+    LangGraph --> Mesh
+
+    LangGraph --> Chroma
+
+    Products --> SQLite
+
+    Behavior --> SQLite
+
+    Analytics --> SQLite
+
+    Recommendation --> SQLite
+
+    Scheduler --> Recommendation
+
+    Products --> Chroma
+```
+
+### Architecture Components
+
+| Component | Responsibility |
+|-----------|----------------|
+| **Frontend** | User interface built with Jinja2 templates and Bootstrap |
+| **FastAPI** | REST APIs and server-side rendering |
+| **Behavior Tracking** | Records user interactions such as searches, clicks, and product views |
+| **Recommendation Service** | Coordinates AI recommendation generation |
+| **LangGraph** | Multi-agent orchestration workflow |
+| **Mesh API** | Generates AI-powered recommendation explanations |
+| **ChromaDB** | Semantic vector search using embeddings |
+| **SQLite** | Stores users, products, behavior events, and recommendations |
+| **Analytics** | Generates dashboards and behavioral insights |
+| **APScheduler** | Background recommendation refresh jobs |
+
 ### Database Design Highlights
 
 - **Users** store authentication and authorization information.
