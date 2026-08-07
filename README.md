@@ -314,6 +314,184 @@ http://127.0.0.1:8000/analytics
 
 ---
 
+---
+
+# 🔄 Recommendation Request Flow
+
+The following sequence diagram illustrates how SmartReco generates personalized recommendations from user behavior.
+
+```mermaid
+sequenceDiagram
+
+    participant User
+    participant Frontend
+    participant FastAPI
+    participant RecommendationService
+    participant LangGraph
+    participant BehaviorAgent
+    participant MemoryAgent
+    participant RetrievalAgent
+    participant ChromaDB
+    participant RecommendationAgent
+    participant MeshAPI
+    participant SQLite
+
+    User->>Frontend: Open Recommendations Page
+
+    Frontend->>FastAPI: GET /recommendations
+
+    FastAPI->>RecommendationService: Generate Recommendations
+
+    RecommendationService->>SQLite: Fetch User Behavior
+
+    RecommendationService->>LangGraph: Start AI Workflow
+
+    LangGraph->>BehaviorAgent: Analyze User Activity
+
+    BehaviorAgent->>MemoryAgent: Build User Profile
+
+    MemoryAgent->>RetrievalAgent: Retrieve Relevant Products
+
+    RetrievalAgent->>ChromaDB: Semantic Search
+
+    ChromaDB-->>RetrievalAgent: Similar Products
+
+    RetrievalAgent->>RecommendationAgent: Top Products
+
+    RecommendationAgent->>MeshAPI: Generate Explanation
+
+    MeshAPI-->>RecommendationAgent: AI Response
+
+    RecommendationAgent-->>RecommendationService: Recommendations
+
+    RecommendationService->>SQLite: Save Recommendation History
+
+    RecommendationService-->>FastAPI: Recommendation Response
+
+    FastAPI-->>Frontend: JSON
+
+    Frontend-->>User: Display Recommendation Cards
+```
+
+---
+
+# 🤖 LangGraph AI Agent Workflow
+
+SmartReco uses a modular **LangGraph** workflow where each AI agent has a specialized responsibility. This architecture keeps the recommendation pipeline maintainable, scalable, and easy to extend.
+
+```mermaid
+stateDiagram-v2
+
+    [*] --> BehaviorAgent
+
+    BehaviorAgent --> MemoryAgent : Analyze Behavior
+
+    MemoryAgent --> RetrievalAgent : Build User Profile
+
+    RetrievalAgent --> RecommendationAgent : Retrieve Similar Products
+
+    RecommendationAgent --> StoreRecommendations : Generate AI Explanation
+
+    StoreRecommendations --> [*] : Recommendations Saved
+
+    BehaviorAgent --> [*] : Error
+
+    RetrievalAgent --> [*] : No Relevant Products
+
+    RecommendationAgent --> [*] : LLM Error
+```
+
+---
+
+# 🗄️ Database Entity Relationship Diagram
+
+The SmartReco database is designed around five core entities: **Users**, **Categories**, **Products**, **Behavior Events**, and **Recommendations**.
+
+```mermaid
+erDiagram
+
+    USERS {
+        uuid id PK
+        string username
+        string email
+        string hashed_password
+        string role
+        boolean is_active
+        datetime created_at
+    }
+
+    CATEGORIES {
+        int id PK
+        string name
+        text description
+    }
+
+    PRODUCTS {
+        uuid id PK
+        string name
+        text description
+        float price
+        string difficulty
+        float rating
+        string image_url
+        int category_id FK
+        json attributes
+        string chroma_document_id
+        boolean is_active
+        datetime created_at
+    }
+
+    BEHAVIOR_EVENTS {
+        uuid id PK
+        uuid user_id FK
+        uuid product_id FK
+        string session_id
+        string event_type
+        json event_data
+        string search_query
+        datetime timestamp
+    }
+
+    RECOMMENDATIONS {
+        uuid id PK
+        uuid user_id FK
+        uuid product_id FK
+        float confidence_score
+        text explanation
+        json recommendation_context
+        string feedback
+        datetime created_at
+    }
+
+    USERS ||--o{ BEHAVIOR_EVENTS : performs
+
+    USERS ||--o{ RECOMMENDATIONS : receives
+
+    CATEGORIES ||--o{ PRODUCTS : contains
+
+    PRODUCTS ||--o{ BEHAVIOR_EVENTS : viewed
+
+    PRODUCTS ||--o{ RECOMMENDATIONS : recommended
+```
+
+### Database Design Highlights
+
+- **Users** store authentication and authorization information.
+- **Categories** organize products into logical groups.
+- **Products** are synchronized with both SQLite and ChromaDB for semantic retrieval.
+- **Behavior Events** capture user interactions such as page views, searches, clicks, and product views.
+- **Recommendations** store AI-generated recommendations, confidence scores, explanations, and user feedback for future analysis.
+
+### Agent Responsibilities
+
+| Agent | Responsibility |
+|--------|----------------|
+| **Behavior Agent** | Analyzes browsing history, searches, clicks and page views |
+| **Memory Agent** | Creates a concise summary of user interests |
+| **Retrieval Agent** | Performs semantic search on ChromaDB using embeddings |
+| **Recommendation Agent** | Generates persuasive recommendation explanations using Mesh API |
+| **Store Recommendations** | Saves generated recommendations into SQLite for future retrieval |
+
 # 🤖 AI Agent Workflow
 
 SmartReco uses a modular multi-agent workflow powered by **LangGraph**. Each agent has a single responsibility, making the recommendation pipeline maintainable and scalable.
