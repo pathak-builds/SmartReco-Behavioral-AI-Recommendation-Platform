@@ -2,10 +2,26 @@
 
 > **Behavioral AI Recommendation Platform powered by FastAPI, LangGraph, ChromaDB and Mesh API**
 
-SmartReco is an intelligent recommendation platform that observes user behavior, understands interests using AI agents, retrieves relevant products through semantic search, and generates personalized recommendations using Large Language Models.
+## 📖 Project Description
 
-Built for the **SmartReco Build Challenge 2026**.
+**SmartReco** is a production-inspired **Behavioral AI Recommendation Platform** that transforms user interactions into intelligent, personalized recommendations. Instead of relying on traditional popularity-based suggestions, SmartReco continuously observes user behavior—such as browsing history, searches, clicks, and product views—to understand individual interests and learning preferences.
 
+The platform leverages a **multi-agent AI workflow built with LangGraph**, where specialized agents analyze behavioral patterns, build dynamic user profiles, retrieve semantically relevant products from **ChromaDB** using **Retrieval-Augmented Generation (RAG)**, and generate persuasive, human-like recommendation explanations using **Large Language Models** through the **Mesh API**.
+
+Designed with real-world production principles, SmartReco features **dual-write synchronization** between SQLite and ChromaDB, efficient behavioral event tracking, background recommendation scheduling with APScheduler, interactive analytics dashboards, and a modern responsive user interface. The modular architecture enables scalable AI workflows, efficient recommendation generation, and seamless integration with different LLM providers.
+
+SmartReco demonstrates how **Behavioral Analytics, Agentic AI, Semantic Search, and Generative AI** can be combined to build an intelligent recommendation system capable of delivering personalized user experiences for modern learning platforms, e-commerce applications, and digital marketplaces..
+
+![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=for-the-badge&logo=fastapi)
+![LangGraph](https://img.shields.io/badge/LangGraph-Agentic%20Workflow-orange?style=for-the-badge)
+![Mesh API](https://img.shields.io/badge/Powered%20by-Mesh%20API-purple?style=for-the-badge)
+![ChromaDB](https://img.shields.io/badge/RAG-ChromaDB-7B61FF?style=for-the-badge)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)
+![JWT](https://img.shields.io/badge/Auth-JWT-red?style=for-the-badge)
+![APScheduler](https://img.shields.io/badge/Scheduler-APScheduler-success?style=for-the-badge)
+![Bootstrap](https://img.shields.io/badge/UI-Bootstrap%205-7952B3?style=for-the-badge&logo=bootstrap)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ---
 
 ## ✨ Features
