@@ -16,6 +16,7 @@ from app.database import get_db
 from app.models.behavior import BehaviorEvent, EventType
 from app.models.product import Product
 from app.models.recommendation import Recommendation
+from app.models.category import Category
 from app.models.user import User
 from app.services.analytics_service import AnalyticsService
 
@@ -126,6 +127,48 @@ def analytics_page(
         .limit(10)
         .all()
     )
+    
+    most_active_users = (
+        db.query(
+            User.username,
+            func.count(BehaviorEvent.id),
+        )
+        .join(
+            BehaviorEvent,
+            User.id == BehaviorEvent.user_id,
+        )
+        .group_by(
+            User.username,
+        )
+        .order_by(
+            func.count(BehaviorEvent.id).desc()
+        )
+        .limit(5)
+        .all()
+    )
+    
+    popular_categories = (
+        db.query(
+            Category.name,
+            func.count(BehaviorEvent.id),
+        )
+        .join(
+            Product,
+            Product.category_id == Category.id,
+        )
+        .join(
+            BehaviorEvent,
+            BehaviorEvent.product_id == Product.id,
+        )
+        .group_by(
+            Category.name,
+        )
+        .order_by(
+            func.count(BehaviorEvent.id).desc()
+        )
+        .limit(5)
+        .all()
+    )
         
 
     return templates.TemplateResponse(
@@ -173,6 +216,22 @@ def analytics_page(
 
             "search_values": [
                 count for _, count in top_searches
+            ],
+            
+            "active_user_labels": [
+                username for username, _ in most_active_users
+            ],
+
+            "active_user_values": [
+                count for _, count in most_active_users
+            ],
+            
+            "category_labels": [
+                name for name, _ in popular_categories
+            ],
+
+            "category_values": [
+                count for _, count in popular_categories
             ],
             
             

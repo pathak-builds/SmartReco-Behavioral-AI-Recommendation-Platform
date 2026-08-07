@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.utils.logging_config import setup_logging
-
+from app.services.scheduler_service import start_scheduler
 from app.api.auth import router as auth_router
 from app.api.products import router as products_router
 from app.api.admin import router as admin_router
@@ -54,10 +54,17 @@ async def lifespan(app: FastAPI):
     Path("logs").mkdir(parents=True, exist_ok=True)
     Path("data").mkdir(parents=True, exist_ok=True)
     Path(settings.CHROMA_PERSIST_DIR).mkdir(parents=True, exist_ok=True)
+    
+    # Start scheduler
+    start_scheduler()
 
     yield
 
     logger.info("Application shutting down...")
+    
+    from app.services.scheduler_service import scheduler
+
+    scheduler.shutdown()
 
 
 # ---------------------------------------------------------
@@ -74,11 +81,11 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
-app.mount(
-    "/static",
-    StaticFiles(directory="app/static"),
-    name="static",
-)
+# app.mount(
+#     "/static",
+#     StaticFiles(directory="app/static"),
+#     name="static",
+# )
 
 # ---------------------------------------------------------
 # API Routers
