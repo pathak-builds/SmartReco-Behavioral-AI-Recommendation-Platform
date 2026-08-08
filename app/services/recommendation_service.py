@@ -8,9 +8,8 @@ personalized recommendations.
 from __future__ import annotations
 
 from sqlalchemy.orm import Session
-
+from datetime import datetime, timedelta, timezone
 from fastapi import HTTPException
-
 
 from app.agents.graph import RecommendationGraph
 from app.models.behavior import BehaviorEvent
@@ -74,6 +73,39 @@ class RecommendationService:
         )
         
     # ======================================================
+    # Recommendation Cache
+    # ======================================================
+
+    def get_cached_recommendations(
+        self,
+        user_id: str,
+        minutes: int = 30,
+    ):
+        """
+        Return recent recommendations if available.
+        """
+
+        cutoff = datetime.now(
+            timezone.utc
+        ) - timedelta(
+            minutes=minutes
+        )
+
+        return (
+            self.db.query(
+                Recommendation
+            )
+            .filter(
+                Recommendation.user_id == user_id,
+                Recommendation.created_at >= cutoff,
+            )
+            .order_by(
+                Recommendation.created_at.desc()
+            )
+            .all()
+        )
+        
+    # ======================================================
     # Recommendations
     # ======================================================
 
@@ -85,6 +117,36 @@ class RecommendationService:
         """
         Generate recommendations.
         """
+        
+        # ----------------------------------
+        # Cache Check
+        # ----------------------------------
+
+        if user_id:
+
+            cached = self.get_cached_recommendations(
+                user_id=user_id
+            )
+
+            if cached:
+
+                print(
+                    "Returning cached recommendations..."
+                )
+
+                return [
+                    {
+                        "product": {
+                            "product_id": r.product_id,
+                            "metadata": r.recommendation_context[
+                                "metadata"
+                            ],
+                        },
+                        "score": r.confidence_score,
+                        "explanation": r.explanation,
+                    }
+                    for r in cached
+                ]
 
         events = self.get_recent_events(
             user_id=user_id,
@@ -137,6 +199,26 @@ class RecommendationService:
             return
 
         for item in recommendations:
+            
+            
+            # ----------------------------------
+            # Prevent duplicates
+            # ----------------------------------
+
+            existing = (
+                self.db.query(
+                    Recommendation
+                )
+                .filter(
+                    Recommendation.user_id == user_id,
+                    Recommendation.product_id ==
+                    item["product"]["product_id"],
+                )
+                .first()
+            )
+
+            if existing:
+                continue
 
             recommendation = Recommendation(
 

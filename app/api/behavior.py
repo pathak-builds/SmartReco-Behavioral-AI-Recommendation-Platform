@@ -66,3 +66,38 @@ def record_behavior_event(
     )
 
     return event
+
+@router.post(
+    "/batch",
+    status_code=status.HTTP_201_CREATED,
+)
+def record_behavior_batch(
+    payload: list[BehaviorEventCreate],
+    db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_user),
+):
+    """
+    Record multiple behavior events
+    in a single request.
+    """
+
+    service = BehaviorService(db)
+
+    events = []
+
+    for item in payload:
+
+        event = service.record_event(
+            payload=item,
+            user_id=(
+                str(current_user.id)
+                if current_user
+                else None
+            ),
+        )
+
+        events.append(event)
+
+    return {
+        "message": f"{len(events)} events recorded"
+    }

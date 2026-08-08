@@ -353,13 +353,15 @@ Products
 
 <script>
 
-const sessionId = localStorage.getItem("smartreco_session");
+const currentSessionId =
+    localStorage.getItem(
+        "smartreco_session"
+    );
+if (currentSessionId) {
 
-if (sessionId) {
+    console.log("Session ID:", currentSessionId);
 
-    console.log("Session ID:", sessionId);
-
-    fetch(`/recommendations/?session_id=${sessionId}`)
+    fetch(`/recommendations/?session_id=${currentSessionId}`)
 
         .then(response => {
             console.log("Status:", response.status);

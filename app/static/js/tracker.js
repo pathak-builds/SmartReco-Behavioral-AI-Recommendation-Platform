@@ -17,18 +17,49 @@ if (!sessionId) {
 }
 
 // ======================================================
-// Helper
+// Event Queue
 // ======================================================
 
-async function sendEvent(
+const eventQueue = [];
+
+function sendEvent(
     eventType,
     eventData = {}
 ) {
 
+    eventQueue.push({
+
+        session_id: sessionId,
+
+        event_type: eventType,
+
+        event_data: eventData,
+
+        timestamp:
+            new Date().toISOString()
+
+    });
+
+}
+
+// ======================================================
+// Flush Events Every 5 Seconds
+// ======================================================
+
+async function flushEvents() {
+
+    if (eventQueue.length === 0) {
+        return;
+    }
+
+    const events = [...eventQueue];
+
+    eventQueue.length = 0;
+
     try {
 
         await fetch(
-            "/behavior/event",
+            "/behavior/batch",
             {
                 method: "POST",
 
@@ -37,18 +68,8 @@ async function sendEvent(
                 },
 
                 body: JSON.stringify({
-
-                    session_id: sessionId,
-
-                    event_type: eventType,
-
-                    event_data: eventData,
-
-                    timestamp:
-                        new Date().toISOString()
-
-                })
-
+                    events: events
+                }),
             }
         );
 
@@ -59,6 +80,11 @@ async function sendEvent(
     }
 
 }
+
+setInterval(
+    flushEvents,
+    5000
+);
 
 // ======================================================
 // Session Start
